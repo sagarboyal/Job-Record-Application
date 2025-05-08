@@ -15,11 +15,11 @@ public class AppConfig {
     public CommandLineRunner initDefaultData(JobRoleRepository jobRoleRepository) {
         return args -> {
             List<String> predefinedRoles = List.of(
-                    "Software Developer",
-                    "Senior Manager",
-                    "Product Manager",
-                    "UI/UX Designer",
-                    "Data Scientist"
+                    "software developer",
+                    "senior manager",
+                    "product manager",
+                    "ui/ux designer",
+                    "data scientist"
             );
             predefinedRoles.forEach(roleName -> {
                 jobRoleRepository.findRoleByName(roleName)
@@ -35,6 +35,8 @@ public class AppConfig {
                                 }
                         );
             });
+
+
         };
     }
 }
