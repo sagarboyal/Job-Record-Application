@@ -5,10 +5,15 @@ import com.main.app.entity.JobRole;
 import com.main.app.entity.JobStatus;
 import com.main.app.exception.ResourceNotFoundException;
 import com.main.app.dto.JobDTO;
+import com.main.app.payload.response.JobResponse;
 import com.main.app.repository.JobRepository;
 import com.main.app.repository.JobRoleRepository;
 import com.main.app.service.JobService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,37 +42,66 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public Job updateJob(Job job) {
-        Job dbJob = findJobById(job.getId());
+    public JobDTO updateJob(JobDTO jobDTO) {
+        Job dbJob = findJobById(jobDTO.getId());
 
-        dbJob.setCompany(job.getCompany() != null ? job.getCompany() : dbJob.getCompany());
-        dbJob.setSource(job.getSource() != null ? job.getSource() : dbJob.getSource());
-        dbJob.setNotes(job.getNotes() != null ? job.getNotes() : dbJob.getNotes());
-        dbJob.setStatus(job.getStatus() != null ? job.getStatus() : dbJob.getStatus());
+        dbJob.setCompany(jobDTO.getCompany() != null ? jobDTO.getCompany() : dbJob.getCompany());
+        dbJob.setSource(jobDTO.getSource() != null ? jobDTO.getSource() : dbJob.getSource());
+        dbJob.setNotes(jobDTO.getNotes() != null ? jobDTO.getNotes() : dbJob.getNotes());
+        dbJob.setUrl(jobDTO.getUrl() != null ? jobDTO.getUrl() : dbJob.getUrl());
 
-        return jobRepository.save(dbJob);
+        return mapToJobDTO(jobRepository.save(dbJob));
     }
 
     @Override
-    public Job deleteJob(Long id) {
+    public JobDTO deleteJob(Long id) {
         Job dbJob = findJobById(id);
         jobRepository.delete(dbJob);
-        return dbJob;
+        return mapToJobDTO(dbJob);
     }
 
     @Override
-    public List<JobDTO> getJobs() {
-        List<Job> jobs = jobRepository.findAll();
+    public JobResponse getJobs(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Sort sort = sortOrder.equalsIgnoreCase("asc")
+                ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Job> jobPage = jobRepository.findAll(pageDetails);
+        List<Job> jobs = jobPage.getContent();
+        List<JobDTO> dtos = jobs.stream().map(this::mapToJobDTO).toList();
         if (jobs.isEmpty()) {
             throw new ResourceNotFoundException("No Jobs found");
         }
-        return jobs.stream().map(this::mapToJobDTO).toList();
+        return JobResponse.builder()
+                .content(dtos)
+                .totalPages(jobPage.getTotalPages())
+                .totalElements(jobPage.getTotalElements())
+                .pageNumber(jobPage.getNumber())
+                .pageSize(jobPage.getSize())
+                .lastPage(jobPage.isLast())
+                .build();
     }
 
     @Override
     public JobDTO updateStatus(Long id, String status) {
         Job job = findJobById(id);
         job.setStatus(JobStatus.valueOf(status.toUpperCase()));
+        return mapToJobDTO(jobRepository.save(job));
+    }
+
+    @Override
+    public JobDTO updateRole(Long id, String roleName) {
+        Job job = findJobById(id);
+        JobRole jobRole = jobRoleRepository.findRoleByName(roleName.toLowerCase())
+                .orElseGet(() -> jobRoleRepository.save(
+                        JobRole.builder()
+                                .name(roleName.toLowerCase())
+                                .isCustom(true)
+                                .build()
+                ));
+
+        job.setRole(jobRole);
         return mapToJobDTO(jobRepository.save(job));
     }
 

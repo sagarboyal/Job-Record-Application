@@ -1,14 +1,14 @@
 package com.main.app.service;
 
-import com.main.app.entity.Job;
 import com.main.app.dto.JobDTO;
+import com.main.app.payload.response.JobResponse;
 
-import java.util.List;
 
 public interface JobService {
     JobDTO createJob(JobDTO jobDTO);
-    Job updateJob(Job job);
-    Job deleteJob(Long id);
-    List<JobDTO> getJobs();
+    JobDTO updateJob(JobDTO jobDTO);
+    JobDTO deleteJob(Long id);
+    JobResponse getJobs(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
     JobDTO updateStatus(Long id, String status);
+    JobDTO updateRole(Long id, String roleName);
 }
