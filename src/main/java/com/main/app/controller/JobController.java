@@ -5,10 +5,12 @@ import com.main.app.dto.JobDTO;
 import com.main.app.payload.response.JobResponse;
 import com.main.app.service.JobService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -23,9 +25,15 @@ public class JobController {
             @RequestParam(name = "pageNumber", defaultValue = PageConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = PageConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = PageConstants.DEFAULT_SORT_BY_JOB_ID, required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = PageConstants.SORT_DIR, required = false) String sortOrder
-    ) {
-        return ResponseEntity.ok(jobService.getJobs(pageNumber, pageSize, sortBy, sortOrder));
+            @RequestParam(name = "sortOrder", defaultValue = PageConstants.SORT_DIR, required = false) String sortOrder,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) String company,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ){
+        return ResponseEntity.ok(jobService.getJobs(status, company, role, startDate, endDate,
+                pageNumber, pageSize, sortBy, sortOrder));
     }
 
     @PostMapping

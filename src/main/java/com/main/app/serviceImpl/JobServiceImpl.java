@@ -9,13 +9,16 @@ import com.main.app.payload.response.JobResponse;
 import com.main.app.repository.JobRepository;
 import com.main.app.repository.JobRoleRepository;
 import com.main.app.service.JobService;
+import com.main.app.specification.JobSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -61,13 +64,20 @@ public class JobServiceImpl implements JobService {
     }
 
     @Override
-    public JobResponse getJobs(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+    public JobResponse getJobs(String status, String company, String role, LocalDate start, LocalDate end,
+                               Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
+        Specification<Job> spec = Specification.where(JobSpecification.hasStatus(convertStatus(status)))
+                .and(JobSpecification.hasCompany(company))
+                .and(JobSpecification.hasRole(role))
+                .and(JobSpecification.appliedBetween(start, end));
+
+
         Sort sort = sortOrder.equalsIgnoreCase("asc")
                 ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
 
         Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sort);
-        Page<Job> jobPage = jobRepository.findAll(pageDetails);
+        Page<Job> jobPage = jobRepository.findAll(spec, pageDetails);
         List<Job> jobs = jobPage.getContent();
         List<JobDTO> dtos = jobs.stream().map(this::mapToJobDTO).toList();
         if (jobs.isEmpty()) {
@@ -132,5 +142,9 @@ public class JobServiceImpl implements JobService {
                 .notes(job.getNotes())
                 .url(job.getUrl())
                 .build();
+    }
+
+    private JobStatus convertStatus(String status) {
+        return status != null ? JobStatus.valueOf(status.toUpperCase()) : null;
     }
 }
