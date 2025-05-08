@@ -6,12 +6,13 @@ import com.lowagie.text.pdf.*;
 import com.main.app.entity.Job;
 
 import java.awt.*;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
 public class PdfExportUtil {
 
-    public static void exportJobsToPdf(List<Job> jobs, OutputStream outputStream) throws Exception {
+    public static void exportJobsToPdf(List<Job> jobs, OutputStream outputStream) throws IOException {
         Document document = new Document(PageSize.A4);
         PdfWriter.getInstance(document, outputStream);
         document.open();
