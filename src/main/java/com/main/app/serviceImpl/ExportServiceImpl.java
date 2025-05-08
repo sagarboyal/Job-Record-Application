@@ -6,6 +6,7 @@ import com.main.app.repository.JobRepository;
 import com.main.app.service.ExportService;
 import com.main.app.specification.JobSpecification;
 import com.main.app.util.CsvExportUtil;
+import com.main.app.util.DocxExportUtil;
 import com.main.app.util.PdfExportUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.jpa.domain.Specification;
@@ -53,6 +54,21 @@ public class ExportServiceImpl implements ExportService {
 
         CsvExportUtil.exportJobsToCsv(jobs, response.getWriter());
 
+    }
+
+    @Override
+    public void exportDocx(String status, String company, String role, LocalDate startDate, LocalDate endDate, HttpServletResponse response) throws Exception {
+        Specification<Job> spec = Specification.where(JobSpecification.hasStatus(convertStatus(status)))
+                .and(JobSpecification.hasCompany(company))
+                .and(JobSpecification.hasRole(role))
+                .and(JobSpecification.appliedBetween(startDate, endDate));
+
+        List<Job> jobs = jobRepository.findAll(spec);
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+        response.setHeader("Content-Disposition", "attachment; filename=jobs.docx");
+
+        DocxExportUtil.exportJobsToDocx(jobs, response.getOutputStream());
     }
 
     private JobStatus convertStatus(String status) {

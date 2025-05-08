@@ -44,5 +44,18 @@ public class ExportController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/docx")
+    public ResponseEntity<Void> exportFilteredJobsToDocx(
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) String company,
+            @RequestParam(required = false) String role,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            HttpServletResponse response) throws Exception {
+        exportService.exportDocx(status, company, role, startDate, endDate, response);
+        return ResponseEntity.noContent().build();
+    }
+
+
 
 }
