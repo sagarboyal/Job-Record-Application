@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = "http://localhost:8080/api"; // Your backend base URL
+export const BASE_URL = "http://localhost:8080"; // Your backend base URL
 
 // Utility function to make API calls
 export const apiCall = async (endpoint, method = "GET", body = null) => {
