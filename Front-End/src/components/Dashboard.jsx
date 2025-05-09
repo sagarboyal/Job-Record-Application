@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import JobForm from "./JobFrom"; // make sure the path is correct
+import { TbX } from "react-icons/tb";
 
 const Dashboard = () => {
   const [showForm, setShowForm] = useState(false);
@@ -100,15 +101,19 @@ const Dashboard = () => {
 
       {/* Modal */}
       {showForm && (
-        <div className='fixed inset-0 bg-black/30 flex justify-center items-center z-50'>
-          <div className='bg-white rounded p-6 w-full max-w-lg relative z-50'>
-            <button
-              onClick={() => setShowForm(false)}
-              className='absolute top-2 right-3 text-xl text-gray-500'
-            >
-              &times;
-            </button>
-            <JobForm onSubmit={handleAddJob} />
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm'>
+          <div className='relative w-full max-w-2xl p-4 sm:p-8 animate-fadeIn'>
+            <div className='bg-white rounded-2xl shadow-xl p-6 sm:p-8'>
+              <button
+                onClick={() => setShowForm(false)}
+                className='absolute top-10 right-10 text-gray-500 hover:text-gray-800 transition-colors'
+                aria-label='Close modal'
+              >
+                <TbX size={30} />
+              </button>
+
+              <JobForm onSubmit={handleAddJob} />
+            </div>
           </div>
         </div>
       )}
