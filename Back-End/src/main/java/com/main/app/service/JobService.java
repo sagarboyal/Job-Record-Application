@@ -1,9 +1,11 @@
 package com.main.app.service;
 
 import com.main.app.dto.JobDTO;
+import com.main.app.entity.JobRole;
 import com.main.app.payload.response.JobResponse;
 
 import java.time.LocalDate;
+import java.util.List;
 
 
 public interface JobService {
@@ -14,4 +16,5 @@ public interface JobService {
                         Integer pageNumber, Integer pageSize, String sortBy, String sortOrder);
     JobDTO updateStatus(Long id, String status);
     JobDTO updateRole(Long id, String roleName);
+    List<JobRole> getDefaultJobRoles();
 }

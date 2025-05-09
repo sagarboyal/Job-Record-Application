@@ -115,6 +115,11 @@ public class JobServiceImpl implements JobService {
         return mapToJobDTO(jobRepository.save(job));
     }
 
+    @Override
+    public List<JobRole> getDefaultJobRoles() {
+        return jobRoleRepository.findByIsCustom(false);
+    }
+
     private Job findJobById(Long id) {
         return jobRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Job with id : "+ id +" not found!"));

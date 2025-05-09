@@ -2,6 +2,7 @@ package com.main.app.controller;
 
 import com.main.app.constants.PageConstants;
 import com.main.app.dto.JobDTO;
+import com.main.app.entity.JobRole;
 import com.main.app.payload.response.JobResponse;
 import com.main.app.service.JobService;
 import lombok.RequiredArgsConstructor;
@@ -62,5 +63,10 @@ public class JobController {
     @DeleteMapping
     public ResponseEntity<JobDTO> deleteJob(Long id) {
         return ResponseEntity.ok(jobService.deleteJob(id));
+    }
+
+    @GetMapping("/default")
+    public ResponseEntity<List<JobRole>> getDefaultJob() {
+        return ResponseEntity.ok(jobService.getDefaultJobRoles());
     }
 }
