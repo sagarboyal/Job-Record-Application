@@ -1,11 +1,10 @@
 import "./App.css";
-import JobForm from "./components/JobFrom";
-import JobFormWrapper from "./components/JobFromWrapper";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   return (
     <>
-      <JobFormWrapper />
+      <Dashboard />
     </>
   );
 }
