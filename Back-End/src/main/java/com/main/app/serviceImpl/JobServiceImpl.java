@@ -39,7 +39,9 @@ public class JobServiceImpl implements JobService {
                 ));
 
         Job job = mapToJob(jobDTO);
-        job.setStatus(JobStatus.APPLIED);
+        if (jobDTO.getAppliedAt() != null) job.setAppliedAt(jobDTO.getAppliedAt());
+        String status = jobDTO.getStatus().toUpperCase();
+        job.setStatus(status.isEmpty() ? JobStatus.APPLIED : JobStatus.valueOf(status));
         job.setRole(jobRole);
         return mapToJobDTO(jobRepository.save(job));
     }

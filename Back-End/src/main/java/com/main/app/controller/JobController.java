@@ -65,7 +65,7 @@ public class JobController {
         return ResponseEntity.ok(jobService.deleteJob(id));
     }
 
-    @GetMapping("/default")
+    @GetMapping("/roles/default")
     public ResponseEntity<List<JobRole>> getDefaultJob() {
         return ResponseEntity.ok(jobService.getDefaultJobRoles());
     }
