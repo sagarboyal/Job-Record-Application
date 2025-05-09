@@ -1,9 +1,11 @@
 import "./App.css";
+import JobForm from "./components/JobFrom";
+import JobFormWrapper from "./components/JobFromWrapper";
 
 function App() {
   return (
     <>
-      <h1 class='text-3xl font-bold underline-offset-8'>Hello world!</h1>
+      <JobFormWrapper />
     </>
   );
 }
